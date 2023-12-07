@@ -1,14 +1,5 @@
 <?php
-
-function validate_message($message)
-{
-    // function to check if message is correct (must have at least 10 characters (after trimming))
-    if (strlen(trim($message)) >= 10) {
-        return true;
-    }
-    return false;
-}
-
+// Các ràng buộc dữ liệu 
 function validate_username($username)
 {
     // function to check if username is correct (must be alphanumeric => Use the function 'ctype_alnum()')
@@ -26,11 +17,20 @@ function validate_email($email)
     }
     return false;
 }
+function validate_message($message)
+{
+    // function to check if message is correct (must have at least 10 characters (after trimming))
+    if (strlen(trim($message)) >= 10) {
+        return true;
+    }
+    return false;
+}
 
 $user_error = "";
 $email_error = "";
 $terms_error = "";
 $message_error = "";
+
 $username = "";
 $email = "";
 $message = "";
@@ -38,9 +38,10 @@ $message = "";
 $form_valid = false;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $message = $_POST['message'];
+    //để chuyển đổi các ký tự đặc biệt thành các entity HTML
+    $username = htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8');
+    $email = htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8');
+    $message = htmlspecialchars($_POST['message'], ENT_QUOTES, 'UTF-8');
     $terms = isset($_POST['terms']);
 
     if (empty($username)) {
@@ -76,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="row mb-3 mt-3">
         <div class="col">
             <input type="text" class="form-control" placeholder="Enter Name" name="username" value="<?php             
-            echo $username; ?>">
+            echo $username;?>">
             <small class="form-text text-danger"> <?php echo $user_error; ?></small>
         </div>
         <div class="col">
@@ -89,11 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <small class="form-text text-danger"> <?php echo $message_error; ?></small>
     </div>
     <div class="mb-3">
-        <input type="checkbox" class="form-control-check" name="terms" id="terms" value="1" <?php
-            $terms = isset($_POST['terms']);
-            if ($terms) {
-                echo 'checked';
-            } ?>>
+        <input type="checkbox" class="form-control-check" name="terms" id="terms" value="1">
         <label for="terms">I accept the Terms of Service</label>
         <small class="form-text text-danger"> <?php echo $terms_error; ?></small>
     </div>
